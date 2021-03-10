@@ -174,7 +174,9 @@ Successfully tagged intel/intel-sgx-initcontainer:devel
 
 #### Deploy the DaemonSet
 
-Deploying the plugin involves the deployment of the
+There are two alternative ways to deploy SGX device plugin.
+
+The first approach relies on presence of the certificate manager, and involves the deployment of the
 [SGX DaemonSet YAML](/deployments/sgx_plugin/base/intel-sgx-plugin.yaml)
 and [node-feature-discovery](/deployments/sgx_nfd/kustomization.yaml)
 with the necessary configuration.
@@ -182,6 +184,13 @@ with the necessary configuration.
 There is a kustomization for deploying everything:
 ```bash
 $ kubectl apply -k ${INTEL_DEVICE_PLUGINS_SRC}/deployments/sgx_plugin/overlays/epc-nfd/
+```
+
+The second approach has a lesser deployment footprint. It does not require the certificate manager or NFD. Instead, it deploys a self-signed certificate for the SGX admission webhook, and a helper daemonset that creates a node label and advertises EPC capacity.
+
+The following kustomization is used for this approach:
+```bash
+$ kubectl apply -k ${INTEL_DEVICE_PLUGINS_SRC}/deployments/sgx_plugin/overlays/epc-register/
 ```
 
 #### Verify SGX device plugin is registered:
